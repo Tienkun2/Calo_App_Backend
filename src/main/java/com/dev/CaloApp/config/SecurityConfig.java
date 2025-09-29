@@ -77,11 +77,11 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        SecretKey secretKey = new SecretKeySpec(signerKey.getBytes(), "HmacSHA512");
+        SecretKey secretKey = new SecretKeySpec(signerKey.getBytes(), "HmacSHA256");
 
         return NimbusJwtDecoder
                 .withSecretKey(secretKey)
-                .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS512)
+                .macAlgorithm(org.springframework.security.oauth2.jose.jws.MacAlgorithm.HS256)
                 .build();
     }
 

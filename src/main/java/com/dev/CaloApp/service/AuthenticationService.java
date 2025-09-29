@@ -103,7 +103,7 @@ public class AuthenticationService {
     public String generateToken(User user){
         String userId = (user.getId() != null) ? String.valueOf(user.getId()) : user.getGoogleId();
         // Phần header, xác định thuật toán ký
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         // ClaimSet
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
