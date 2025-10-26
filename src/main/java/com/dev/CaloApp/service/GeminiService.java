@@ -27,10 +27,9 @@ public class GeminiService {
 
     public ApiResponse<String> generateContent(GeminiRequest request) {
         try {
-            log.info(apiKey);
             HttpHeaders headers = new HttpHeaders();
             HttpEntity<GeminiRequest> requestHttpEntity = new HttpEntity<>(request, headers);
-            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=" + apiKey;
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestHttpEntity, String.class);
             // Parse JSON và lấy nội dung phản hồi
             ObjectMapper objectMapper = new ObjectMapper();
@@ -90,7 +89,7 @@ public class GeminiService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<GeminiRequest> requestHttpEntity = new HttpEntity<>(request, headers);
 
-            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=" + apiKey;
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestHttpEntity, String.class);
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -151,7 +150,7 @@ public class GeminiService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<GeminiRequest> requestHttpEntity = new HttpEntity<>(request, headers);
 
-            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=" + apiKey;
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestHttpEntity, String.class);
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -213,7 +212,7 @@ public class GeminiService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<GeminiRequest> requestHttpEntity = new HttpEntity<>(request, headers);
 
-            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
+            String apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=" + apiKey;
             ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, requestHttpEntity, String.class);
 
             ObjectMapper objectMapper = new ObjectMapper();

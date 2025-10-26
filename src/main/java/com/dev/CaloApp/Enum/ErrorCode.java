@@ -45,6 +45,7 @@ public enum ErrorCode {
     FOOD_NOT_FOUND(1038, "Không tìm thấy dữ liệu của thức ăn"),
     FOOD_EXISTED(1039, "Món ăn đã tồn tại trong database"),
     MEAL_LOG_NOT_FOUND(1040, "Không tìm thấy dữ liệu bữa ăn"),
+    INVALID_INPUT(1041, "Dữ liệu đầu vào không hợp lệ"),
     BARCODE_NOT_IN_DATABASE(2000, "không tìm thấy thông tin sản phẩm trong database"),
     VALIDATION_FAILED(9003, "Dữ liệu nhập vào không hợp lệ");
 

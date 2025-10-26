@@ -24,7 +24,7 @@ spring:
             enable: true
   google:
     gemini:
-      api-key: ${GEMINI_API_KEY:your-gemini-api-key}
+      api-key: ${GEMINI_API_KEY:AIzaSyD4cZsf_DV5ugLRw8H_xINnrH7EjpATrEA}
   security:
     oauth2:
       client:

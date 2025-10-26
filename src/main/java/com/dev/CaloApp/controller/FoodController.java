@@ -3,6 +3,8 @@ package com.dev.CaloApp.controller;
 import com.dev.CaloApp.Enum.ErrorCode;
 import com.dev.CaloApp.dto.request.ApiResponse;
 import com.dev.CaloApp.dto.request.FoodCreationRequest;
+import com.dev.CaloApp.dto.request.FoodPredictRequest;
+import com.dev.CaloApp.dto.response.FoodPredictResponse;
 import com.dev.CaloApp.entity.Food;
 import com.dev.CaloApp.entity.MealLog;
 import com.dev.CaloApp.entity.User;
@@ -95,6 +97,15 @@ public class FoodController
         return ApiResponse.<Food>builder()
                 .code(200)
                 .message("delete food success")
+                .build();
+    }
+
+    @PostMapping("/predict")
+    public ApiResponse<FoodPredictResponse> predictFood(@RequestBody FoodPredictRequest request){
+        return ApiResponse.<FoodPredictResponse>builder()
+                .code(200)
+                .message("predict food success")
+                .result(foodService.predictFood(request))
                 .build();
     }
 }
