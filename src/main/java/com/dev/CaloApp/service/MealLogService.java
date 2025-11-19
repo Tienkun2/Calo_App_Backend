@@ -41,8 +41,37 @@ public class MealLogService {
 
     public MealLogResponse createMealLog(@Valid MealLogCreationRequest request) {
         User user = getAuthentication();
-        var food = foodRepository.findById(request.getFoodId())
-                .orElseThrow(() -> new AppException(ErrorCode.FOOD_NOT_FOUND));
+        
+        Food food = foodRepository.findById(request.getFoodId()).orElse(null);
+        
+        if (food == null) {
+            if (request.getFoodName() != null && !request.getFoodName().trim().isEmpty()) {
+                Optional<Food> existingFoodByName = foodRepository.findByName(request.getFoodName());
+                if (existingFoodByName.isPresent()) {
+                    food = existingFoodByName.get();
+                }
+            }
+                
+            if (food == null) {
+                if (hasCompleteNutritionInfo(request)) {
+                    food = createFoodFromRequest(request);
+                } else if (request.getFoodName() != null && !request.getFoodName().trim().isEmpty()) {
+                    try {
+                        food = geminiService.generateNewFood(request.getFoodName());
+                        Optional<Food> existingFood = foodRepository.findByName(food.getName());
+                        if (existingFood.isPresent()) {
+                            food = existingFood.get();
+                        } else {
+                            food = foodRepository.save(food);
+                        }
+                    } catch (Exception e) {
+                        food = createDefaultFood(request.getFoodName());
+                    }
+                } else {
+                    food = createDefaultFood("Unknown Food #" + request.getFoodId());
+                }
+            }
+        }
 
         MealLog mealLog = mealLogMapper.toMealLog(request);
         mealLog.setUser(user);
@@ -51,6 +80,54 @@ public class MealLogService {
         mealLog.setCreatedAt(request.getDate());
 
         return mealLogMapper.toMealLogResponse(mealLogRepository.save(mealLog));
+    }
+    
+    private boolean hasCompleteNutritionInfo(MealLogCreationRequest request) {
+        return request.getFoodName() != null && !request.getFoodName().trim().isEmpty()
+                && request.getFoodCalories() != null
+                && request.getFoodProtein() != null
+                && request.getFoodFat() != null
+                && request.getFoodCarbs() != null
+                && request.getFoodFiber() != null;
+    }
+    
+    private boolean hasPartialNutritionInfo(MealLogCreationRequest request) {
+        return request.getFoodCalories() != null 
+                && (request.getFoodProtein() != null || request.getFoodFat() != null 
+                    || request.getFoodCarbs() != null || request.getFoodFiber() != null);
+    }
+    
+    private Food createFoodFromRequest(MealLogCreationRequest request) {
+        Optional<Food> existingFood = foodRepository.findByName(request.getFoodName());
+        if (existingFood.isPresent()) {
+            return existingFood.get();
+        }
+        
+        Food food = new Food();
+        food.setName(request.getFoodName());
+        food.setCalories(request.getFoodCalories());
+        food.setProtein(request.getFoodProtein());
+        food.setFat(request.getFoodFat());
+        food.setCarbs(request.getFoodCarbs());
+        food.setFiber(request.getFoodFiber());
+        food.setServingSize(request.getFoodServingSize() != null && !request.getFoodServingSize().trim().isEmpty() 
+                ? request.getFoodServingSize() 
+                : "100g");
+        
+        return foodRepository.save(food);
+    }
+    
+    private Food createDefaultFood(String foodName) {
+        Food food = new Food();
+        food.setName(foodName);
+        food.setCalories(200.0);
+        food.setProtein(10.0);
+        food.setFat(5.0);
+        food.setCarbs(30.0);
+        food.setFiber(3.0);
+        food.setServingSize("100g");
+        
+        return foodRepository.save(food);
     }
 
     public Map<String, Object> getAllMealLog(LocalDate date) {
@@ -65,7 +142,6 @@ public class MealLogService {
     }
 
     public double getDailyCaloriesAtDay(Long userId, LocalDate date) {
-        log.info("Fetching meal logs for userId: {} and date: {}", userId, date);
         List<MealLogResponse> mealLogs = mealLogRepository.findByUserIdAndCreatedAt(userId, date)
                 .stream()
                 .map(mealLogMapper::toMealLogResponse)
@@ -159,7 +235,6 @@ public class MealLogService {
             try {
                 foods.add(foodRepository.findByName(name).orElseThrow(() -> new AppException(ErrorCode.FOOD_NOT_FOUND)));
             } catch (AppException e) {
-                log.info(name + ": " + e.getMessage());
             }
         }
 
